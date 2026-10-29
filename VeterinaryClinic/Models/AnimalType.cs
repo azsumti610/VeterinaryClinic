@@ -10,5 +10,7 @@ namespace VeterinaryClinic.Models
         public string Name { get; set; } = string.Empty;
         [StringLength(500)]
         public string? Description { get; set; }
+
+        public ICollection<Breed> Breeds { get; set; } = new List<Breed>();
     }
 }
