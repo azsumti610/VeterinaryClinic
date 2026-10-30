@@ -4,7 +4,7 @@ using VeterinaryClinic.Models;
 
 namespace VeterinaryClinic.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
         public DbSet<AnimalType> AnimalTypes { get; set; }
             = null!;
