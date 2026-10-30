@@ -12,7 +12,7 @@ namespace VeterinaryClinic.Models
         public string? Description { get; set; }
         [Required]
         public int AnimalTypeId { get; set; }
-        public AnimalType AnimalType { get; set; } = null!;
+        public AnimalType? AnimalType { get; set; }
         public ICollection<Animal> Animals { get; set; } = new List<Animal>();
     }
 }
