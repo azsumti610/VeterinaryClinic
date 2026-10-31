@@ -7,10 +7,10 @@ namespace VeterinaryClinic.Models
         public int ExaminationId { get; set; }
         [Required]
         public int AnimalId { get; set; }
-        public Animal Animal { get; set; } = null!;
+        public Animal? Animal { get; set; }
         [Required]
         public string DoctorId { get; set; } = string.Empty;
-        public ApplicationUser Doctor { get; set; } = null!;
+        public ApplicationUser? Doctor { get; set; }
         [Required]
         public DateOnly ExamDate { get; set; }
         [Required]
