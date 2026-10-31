@@ -1,83 +1,45 @@
 @model IEnumerable<VeterinaryClinic.Models.Examination>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Прегледи";
 }
 
-<h1>Index</h1>
+<h1>Прегледи</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Добави преглед</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.AnimalId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Animal)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DoctorId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Doctor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ExamDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ExamTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Diagnosis)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Recommendations)
-            </th>
+            <th>Животно</th>
+            <th>Лекар</th>
+            <th>Дата</th>
+            <th>Час</th>
+            <th>Описание</th>
+            <th>Диагноза</th>
+            <th>Препоръки</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(model => item.AnimalId)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Animal)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.DoctorId)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Doctor)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.ExamDate)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.ExamTime)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Diagnosis)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Recommendations)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ExaminationId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ExaminationId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ExaminationId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Animal?.Name</td>
+                <td>@(item.Doctor?.FullName ?? item.Doctor?.Email)</td>
+                <td>@item.ExamDate.ToString("dd.MM.yyyy")</td>
+                <td>@item.ExamTime.ToString("HH:mm")</td>
+                <td>@item.Description</td>
+                <td>@item.Diagnosis</td>
+                <td>@item.Recommendations</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ExaminationId">Редактирай</a> |
+                    <a asp-action="Details" asp-route-id="@item.ExaminationId">Детайли</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ExaminationId">Изтрий</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

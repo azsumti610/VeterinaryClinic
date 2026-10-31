@@ -16,7 +16,12 @@ public class ExaminationsController : Controller
     // GET: EXAMINATIONS
     public async Task<IActionResult> Index()    
     {
-        return View(await _context.Examinations.ToListAsync());
+
+        var examinations = await _context.Examinations
+        .Include(examination => examination.Animal)
+        .Include(examination => examination.Doctor)
+        .ToListAsync();
+        return View(examinations);
     }
 
     // GET: EXAMINATIONS/Details/5
