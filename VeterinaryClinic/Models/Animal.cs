@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VeterinaryClinic.Models
 {
@@ -21,5 +22,8 @@ namespace VeterinaryClinic.Models
         public string? ImagePath { get; set; }
         public ICollection<Examination> Examinations { get; set; }
             = new List<Examination>();
+
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
     }
 }

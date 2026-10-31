@@ -4,14 +4,17 @@ using Microsoft.EntityFrameworkCore;
 using VeterinaryClinic.Models;
 using VeterinaryClinic.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Hosting;
 
 public class AnimalsController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IWebHostEnvironment _environment;
 
-    public AnimalsController(ApplicationDbContext context)
+    public AnimalsController(ApplicationDbContext context, IWebHostEnvironment environment)
     {
         _context = context;
+        _environment = environment;
     }
 
     // GET: ANIMALS
@@ -45,19 +48,7 @@ public class AnimalsController : Controller
     // GET: ANIMALS/Create
     public IActionResult Create()
     {
-        ViewData["BreedId"] = new SelectList(
-        _context.Breeds,
-        "BreedId",
-        "Name");
-        ViewData["OwnerId"] = new SelectList(
-            _context.Owners.Select(owner => new
-            {
-                owner.OwnerId,
-                FullName = owner.FirstName + " " + owner.LastName
-            }),
-            "OwnerId",
-            "FullName");
-
+        PopulateDropdowns();
         return View();
     }
 
@@ -68,28 +59,68 @@ public class AnimalsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("AnimalId,Name,BreedId,OwnerId,BirthDate,Description,ImagePath")] Animal animal)
     {
+        var imageFile = animal.ImageFile;
+        string? extension = null;
+        if (imageFile is { Length: > 0 })
+        {
+            extension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+            if (!allowedExtensions.Contains(extension))
+            {
+                ModelState.AddModelError(
+                    nameof(animal.ImageFile),
+                    "Избери JPG, JPEG, PNG или WEBP снимка.");
+            }
+            if (imageFile.Length > 5 * 1024 * 1024)
+            {
+                ModelState.AddModelError(
+                    nameof(animal.ImageFile),
+                    "Снимката не трябва да е по-голяма от 5 MB.");
+            }
+        }
         if (ModelState.IsValid)
         {
+            if (imageFile is { Length: > 0 } && extension is not null)
+            {
+                var uploadFolder = Path.Combine(
+                    _environment.WebRootPath,
+                    "uploads",
+                    "animals");
+                Directory.CreateDirectory(uploadFolder);
+                var fileName = $"{Guid.NewGuid():N}{extension}";
+                var filePath = Path.Combine(uploadFolder, fileName);
+                await using var stream = System.IO.File.Create(filePath);
+                await imageFile.CopyToAsync(stream);
+                animal.ImagePath = $"/uploads/animals/{fileName}";
+            }
             _context.Add(animal);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        PopulateDropdowns(animal.BreedId, animal.OwnerId);
+        return View(animal);
+    }
+    private void PopulateDropdowns(
+        int? selectedBreedId = null,
+        int? selectedOwnerId = null)
+    {
         ViewData["BreedId"] = new SelectList(
-       _context.Breeds,
-       "BreedId",
-       "Name",
-       animal.BreedId);
-        ViewData["OwnerId"] = new SelectList(
-            _context.Owners.Select(owner => new
+            _context.Breeds,
+            "BreedId",
+            "Name",
+            selectedBreedId);
+        var owners = _context.Owners
+            .Select(owner => new
             {
                 owner.OwnerId,
                 FullName = owner.FirstName + " " + owner.LastName
-            }),
+            })
+            .ToList();
+        ViewData["OwnerId"] = new SelectList(
+            owners,
             "OwnerId",
             "FullName",
-            animal.OwnerId);
-
-        return View(animal);
+            selectedOwnerId);
     }
 
     // GET: ANIMALS/Edit/5
