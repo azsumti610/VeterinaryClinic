@@ -10,10 +10,10 @@ namespace VeterinaryClinic.Models
         public string Name { get; set; } = string.Empty;
         [Required]
         public int BreedId { get; set; }
-        public Breed Breed { get; set; } = null!;
+        public Breed? Breed { get; set; }
         [Required]
         public int OwnerId { get; set; }
-        public Owner Owner { get; set; } = null!;
+        public Owner? Owner { get; set; }
         public DateOnly? BirthDate { get; set; }
         [StringLength(1000)]
         public string? Description { get; set; }

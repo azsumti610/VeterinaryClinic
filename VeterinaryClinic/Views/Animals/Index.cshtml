@@ -1,0 +1,41 @@
+@model IEnumerable<VeterinaryClinic.Models.Animal>
+
+@{
+    ViewData["Title"] = "Животни";
+}
+
+<h1>Животни</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Добави животно</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Име</th>
+            <th>Порода</th>
+            <th>Собственик</th>
+            <th>Дата на раждане</th>
+            <th>Описание</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Breed?.Name</td>
+                <td>@item.Owner?.FirstName @item.Owner?.LastName</td>
+                <td>@item.BirthDate?.ToString("dd.MM.yyyy")</td>
+                <td>@item.Description</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.AnimalId">Редактирай</a> |
+                    <a asp-action="Details" asp-route-id="@item.AnimalId">Детайли</a> |
+                    <a asp-action="Delete" asp-route-id="@item.AnimalId">Изтрий</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
