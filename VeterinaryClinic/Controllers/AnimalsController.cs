@@ -57,7 +57,7 @@ public class AnimalsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("AnimalId,Name,BreedId,OwnerId,BirthDate,Description,ImagePath")] Animal animal)
+    public async Task<IActionResult> Create([Bind("AnimalId,Name,BreedId,OwnerId,BirthDate,Description,ImageFile")] Animal animal)
     {
         var imageFile = animal.ImageFile;
         string? extension = null;
@@ -200,6 +200,7 @@ public class AnimalsController : Controller
         var animal = await _context.Animals.FindAsync(animalid);
         if (animal != null)
         {
+
             _context.Animals.Remove(animal);
         }
 

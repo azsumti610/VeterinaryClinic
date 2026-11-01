@@ -13,6 +13,7 @@
 <table class="table">
     <thead>
         <tr>
+            <th>Снимка</th>
             <th>Име</th>
             <th>Порода</th>
             <th>Собственик</th>
@@ -25,6 +26,18 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.ImagePath))
+                    {
+                        <img src="@item.ImagePath"
+                             alt="Снимка на @item.Name"
+                             style="max-width:100px; max-height:80px; object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <span>Няма снимка</span>
+                    }
+                </td>
                 <td>@item.Name</td>
                 <td>@item.Breed?.Name</td>
                 <td>@item.Owner?.FirstName @item.Owner?.LastName</td>
