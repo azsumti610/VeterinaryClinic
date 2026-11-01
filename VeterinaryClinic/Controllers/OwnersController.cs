@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VeterinaryClinic.Models;
 using VeterinaryClinic.Data;
+using Microsoft.AspNetCore.Authorization;
 
+[Authorize(Roles = AppRoles.Doctor)]
 public class OwnersController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -48,7 +50,7 @@ public class OwnersController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("OwnerId,FirstName,LastName,PhoneNumber,Email,Address,Animals")] Owner owner)
+    public async Task<IActionResult> Create([Bind("FirstName,LastName,PhoneNumber,Email,Address")] Owner owner)
     {
         if (ModelState.IsValid)
         {
@@ -91,7 +93,17 @@ public class OwnersController : Controller
         {
             try
             {
-                _context.Update(owner);
+                var existingOwner = await _context.Owners
+       .FindAsync(owner.OwnerId);
+                if (existingOwner == null)
+                {
+                    return NotFound();
+                }
+                existingOwner.FirstName = owner.FirstName;
+                existingOwner.LastName = owner.LastName;
+                existingOwner.PhoneNumber = owner.PhoneNumber;
+                existingOwner.Email = owner.Email;
+                existingOwner.Address = owner.Address;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

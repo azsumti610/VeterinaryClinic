@@ -374,6 +374,9 @@ namespace VeterinaryClinic.Data.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(254)
                         .HasColumnType("nvarchar(254)");
@@ -393,6 +396,10 @@ namespace VeterinaryClinic.Data.Migrations
                         .HasColumnType("nvarchar(32)");
 
                     b.HasKey("OwnerId");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique()
+                        .HasFilter("[ApplicationUserId] IS NOT NULL");
 
                     b.ToTable("Owners");
                 });
@@ -497,6 +504,16 @@ namespace VeterinaryClinic.Data.Migrations
                     b.Navigation("Doctor");
                 });
 
+            modelBuilder.Entity("VeterinaryClinic.Models.Owner", b =>
+                {
+                    b.HasOne("VeterinaryClinic.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("Owner")
+                        .HasForeignKey("VeterinaryClinic.Models.Owner", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("VeterinaryClinic.Models.Animal", b =>
                 {
                     b.Navigation("Examinations");
@@ -510,6 +527,8 @@ namespace VeterinaryClinic.Data.Migrations
             modelBuilder.Entity("VeterinaryClinic.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Examinations");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("VeterinaryClinic.Models.Breed", b =>

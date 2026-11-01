@@ -19,6 +19,8 @@ namespace VeterinaryClinic.Models
         public string? Email { get; set; }
         [StringLength(300)]
         public string? Address { get; set; }
+        public string? ApplicationUserId { get; set; }
+        public ApplicationUser? ApplicationUser { get; set; }
 
         public ICollection<Animal> Animals { get; set; } = new List<Animal>();
     }

@@ -24,6 +24,16 @@ namespace VeterinaryClinic.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<Owner>()
+    .HasOne(owner => owner.ApplicationUser)
+    .WithOne(user => user.Owner)
+    .HasForeignKey<Owner>(owner => owner.ApplicationUserId)
+    .IsRequired(false)
+    .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Owner>()
+                .HasIndex(owner => owner.ApplicationUserId)
+                .IsUnique()
+                .HasFilter("[ApplicationUserId] IS NOT NULL");
             builder.Entity<AnimalType>()
                 .HasIndex(animalType => animalType.Name)
                 .IsUnique();

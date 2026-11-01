@@ -7,6 +7,7 @@ namespace VeterinaryClinic.Models
     {
         [StringLength(120)]
         public string? FullName { get; set; }
+        public Owner? Owner { get; set; }
         public ICollection<Examination> Examinations { get; set; }
     = new List<Examination>();
     }
