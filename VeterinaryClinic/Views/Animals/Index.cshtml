@@ -6,49 +6,90 @@
 
 <h1>Животни</h1>
 
+@if (TempData["AnimalError"] is string message)
+{
+    <div class="alert alert-warning" role="alert">
+        @message
+    </div>
+}
+
 <p>
-    <a asp-action="Create" class="btn btn-primary">Добави животно</a>
+    <a asp-action="Create" class="btn btn-primary">
+        Добави животно
+    </a>
 </p>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Снимка</th>
-            <th>Име</th>
-            <th>Порода</th>
-            <th>Собственик</th>
-            <th>Дата на раждане</th>
-            <th>Описание</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.ImagePath))
-                    {
-                        <img src="@item.ImagePath"
-                             alt="Снимка на @item.Name"
-                             style="max-width:100px; max-height:80px; object-fit:cover;" />
-                    }
-                    else
-                    {
-                        <span>Няма снимка</span>
-                    }
-                </td>
-                <td>@item.Name</td>
-                <td>@item.Breed?.Name</td>
-                <td>@item.Owner?.FirstName @item.Owner?.LastName</td>
-                <td>@item.BirthDate?.ToString("dd.MM.yyyy")</td>
-                <td>@item.Description</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.AnimalId">Редактирай</a> |
-                    <a asp-action="Details" asp-route-id="@item.AnimalId">Детайли</a> |
-                    <a asp-action="Delete" asp-route-id="@item.AnimalId">Изтрий</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        Няма животни за показване.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Снимка</th>
+                    <th>Име</th>
+                    <th>Порода</th>
+                    <th>Собственик</th>
+                    <th>Дата на раждане</th>
+                    <th>Описание</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(item.ImagePath))
+                            {
+                                <img src="@Url.Content(item.ImagePath)"
+                                     alt="Снимка на @item.Name"
+                                     class="img-thumbnail"
+                                     style="width: 90px; height: 90px; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <span class="text-muted">
+                                    Няма снимка
+                                </span>
+                            }
+                        </td>
+                        <td>@item.Name</td>
+                        <td>@item.Breed?.Name</td>
+                        <td>
+                            @item.Owner?.FirstName @item.Owner?.LastName
+                        </td>
+                        <td>
+                            @item.BirthDate?.ToString("dd.MM.yyyy")
+                        </td>
+                        <td>@item.Description</td>
+                        <td>
+                            <a asp-action="Details"
+                               asp-route-id="@item.AnimalId"
+                               class="btn btn-sm btn-outline-secondary">
+                                Детайли
+                            </a>
+
+                            <a asp-action="Edit"
+                               asp-route-id="@item.AnimalId"
+                               class="btn btn-sm btn-outline-primary">
+                                Редактирай
+                            </a>
+
+                            <a asp-action="Delete"
+                               asp-route-id="@item.AnimalId"
+                               class="btn btn-sm btn-outline-danger">
+                                Изтрий
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
