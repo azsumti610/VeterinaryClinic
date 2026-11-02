@@ -1,74 +1,151 @@
 @model VeterinaryClinic.Models.Animal
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Редактиране на животно";
 }
 
-<h1>Edit</h1>
-
-<h4>Animal</h4>
+<h1>Редактиране на животно</h1>
 <hr />
+
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-md-6">
+        <form asp-action="Edit"
+              method="post"
+              enctype="multipart/form-data">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger"></div>
+
             <input type="hidden" asp-for="AnimalId" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">
+                    Име
+                </label>
                 <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <span asp-validation-for="Name"
+                      class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="BreedId" class="control-label"></label>
-                <input asp-for="BreedId" class="form-control" />
-                <span asp-validation-for="BreedId" class="text-danger"></span>
+
+            <div class="mb-3">
+                <label asp-for="BreedId" class="form-label">
+                    Порода
+                </label>
+                <select asp-for="BreedId"
+                        asp-items="ViewBag.BreedId"
+                        class="form-select">
+                    <option value="">Изберете порода</option>
+                </select>
+                <span asp-validation-for="BreedId"
+                      class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Breed" class="control-label"></label>
-                <input asp-for="Breed" class="form-control" />
-                <span asp-validation-for="Breed" class="text-danger"></span>
+
+            @if (User.IsInRole("Doctor"))
+            {
+                <div class="mb-3">
+                    <label asp-for="OwnerId" class="form-label">
+                        Собственик
+                    </label>
+                    <select asp-for="OwnerId"
+                            asp-items="ViewBag.OwnerId"
+                            class="form-select">
+                        <option value="">Изберете собственик</option>
+                    </select>
+                    <span asp-validation-for="OwnerId"
+                          class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                <input type="hidden" asp-for="OwnerId" />
+            }
+
+            <div class="mb-3">
+                <label asp-for="BirthDate" class="form-label">
+                    Дата на раждане
+                </label>
+                <input asp-for="BirthDate"
+                       type="date"
+                       class="form-control" />
+                <span asp-validation-for="BirthDate"
+                      class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="OwnerId" class="control-label"></label>
-                <input asp-for="OwnerId" class="form-control" />
-                <span asp-validation-for="OwnerId" class="text-danger"></span>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">
+                    Описание
+                </label>
+                <textarea asp-for="Description"
+                          class="form-control"
+                          rows="3"></textarea>
+                <span asp-validation-for="Description"
+                      class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Owner" class="control-label"></label>
-                <input asp-for="Owner" class="form-control" />
-                <span asp-validation-for="Owner" class="text-danger"></span>
+
+            @if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+            {
+                <div class="mb-3">
+                    <label class="form-label">
+                        Текуща снимка
+                    </label>
+
+                    <div>
+                        <img src="@Model.ImagePath"
+                             alt="Снимка на животното"
+                             style="max-width:250px;
+                        max-height:200px;
+                        object-fit:cover;"
+                             class="img-thumbnail" />
+                    </div>
+
+                    <div class="form-check mt-2">
+                        <input type="checkbox"
+                               name="removeImage"
+                               id="removeImage"
+                               value="true"
+                               class="form-check-input" />
+                        <label for="removeImage"
+                               class="form-check-label">
+                            Премахни текущата снимка
+                        </label>
+                    </div>
+                </div>
+            }
+
+            <div class="mb-3">
+                <label asp-for="ImageFile" class="form-label">
+                    Избери нова снимка
+                </label>
+                <input asp-for="ImageFile"
+                       type="file"
+                       accept=".jpg,.jpeg,.png,.webp"
+                       class="form-control" />
+                <span asp-validation-for="ImageFile"
+                      class="text-danger"></span>
+                <small class="text-muted">
+                    JPG, PNG или WEBP, максимум 5 MB.
+                    Ако не изберете нова снимка,
+                    старата ще се запази.
+                </small>
             </div>
-            <div class="form-group">
-                <label asp-for="BirthDate" class="control-label"></label>
-                <input asp-for="BirthDate" class="form-control" />
-                <span asp-validation-for="BirthDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImagePath" class="control-label"></label>
-                <input asp-for="ImagePath" class="form-control" />
-                <span asp-validation-for="ImagePath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Examinations" class="control-label"></label>
-                <input asp-for="Examinations" class="form-control" />
-                <span asp-validation-for="Examinations" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Запази промените
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+                Назад
+            </a>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
 }

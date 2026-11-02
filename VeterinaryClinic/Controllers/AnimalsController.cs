@@ -205,7 +205,8 @@ public class AnimalsController : Controller
     public async Task<IActionResult> Edit(
         int? id,
         [Bind("AnimalId,Name,BreedId,OwnerId,BirthDate,Description,ImageFile")]
-        Animal input)
+        Animal input,
+        bool removeImage = false)
     {
         if (id == null || id != input.AnimalId)
         {
@@ -252,6 +253,10 @@ public class AnimalsController : Controller
         if (newImagePath != null)
         {
             animal.ImagePath = newImagePath;
+        }
+        else if (removeImage)
+        {
+            animal.ImagePath = null;
         }
 
         await _context.SaveChangesAsync();
