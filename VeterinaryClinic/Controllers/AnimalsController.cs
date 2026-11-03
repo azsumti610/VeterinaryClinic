@@ -333,10 +333,19 @@ public class AnimalsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+
     private async Task PopulateDropdownsAsync(
         int? selectedBreedId = null,
         int? selectedOwnerId = null)
     {
+        var animalTypes = await _context.AnimalTypes
+            .AsNoTracking()
+            .OrderBy(type => type.Name)
+            .ToListAsync();
+
+        ViewData["AnimalTypeId"] = new SelectList(
+            animalTypes, "AnimalTypeId", "Name");
+
         var breeds = await _context.Breeds
             .AsNoTracking()
             .OrderBy(breed => breed.Name)
@@ -344,6 +353,13 @@ public class AnimalsController : Controller
 
         ViewData["BreedId"] = new SelectList(
             breeds, "BreedId", "Name", selectedBreedId);
+
+        ViewData["BreedsByType"] = breeds.Select(breed => new
+        {
+            breed.BreedId,
+            breed.Name,
+            breed.AnimalTypeId
+        }).ToList();
 
         var owners = await AccessibleOwners()
             .AsNoTracking()
@@ -358,6 +374,7 @@ public class AnimalsController : Controller
         ViewData["OwnerId"] = new SelectList(
             owners, "OwnerId", "FullName", selectedOwnerId);
     }
+
 
     private async Task ValidateAnimalAsync(Animal animal)
     {

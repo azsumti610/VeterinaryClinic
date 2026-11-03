@@ -5,41 +5,54 @@
 }
 
 <h1>Добави животно</h1>
-
 <hr />
 
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="All" class="text-danger"></div>
+        <form asp-action="Create"
+              method="post"
+              enctype="multipart/form-data">
+
+            <div asp-validation-summary="All"
+                 class="text-danger"></div>
 
             <div class="form-group mb-3">
-                <label asp-for="Name" class="control-label">Име</label>
+                <label asp-for="Name">Име</label>
                 <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <span asp-validation-for="Name"
+                      class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="BreedId" class="control-label">Порода</label>
-                <select asp-for="BreedId" class="form-control" asp-items="ViewBag.BreedId">
-                    <option value="">-- Избери порода --</option>
+                <label for="AnimalTypeId">Вид животно</label>
+                <select id="AnimalTypeId"
+                        class="form-control"
+                        asp-items="ViewBag.AnimalTypeId"
+                        required>
+                    <option value="">-- Избери животно --</option>
                 </select>
-                <span asp-validation-for="BreedId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="BreedId">Порода</label>
+                <select asp-for="BreedId"
+                        class="form-control"
+                        asp-items="ViewBag.BreedId">
+                    <option value="">-- Първо избери животно --</option>
+                </select>
+                <span asp-validation-for="BreedId"
+                      class="text-danger"></span>
             </div>
 
             @if (User.IsInRole(AppRoles.Doctor))
             {
                 <div class="form-group mb-3">
-                    <label asp-for="OwnerId" class="control-label">
-                        Собственик
-                    </label>
-
+                    <label asp-for="OwnerId">Собственик</label>
                     <select asp-for="OwnerId"
                             class="form-control"
                             asp-items="ViewBag.OwnerId">
                         <option value="">-- Избери собственик --</option>
                     </select>
-
                     <span asp-validation-for="OwnerId"
                           class="text-danger"></span>
                 </div>
@@ -47,32 +60,47 @@
             else
             {
                 <p class="text-muted">
-                    Животното ще бъде добавено към вашия собственически профил.
+                    Животното ще бъде добавено към
+                    вашия собственически профил.
                 </p>
             }
 
             <div class="form-group mb-3">
-                <label asp-for="BirthDate" class="control-label">Дата на раждане</label>
-                <input asp-for="BirthDate" type="date" class="form-control" />
-                <span asp-validation-for="BirthDate" class="text-danger"></span>
+                <label asp-for="BirthDate">
+                    Дата на раждане
+                </label>
+                <input asp-for="BirthDate"
+                       type="date"
+                       class="form-control" />
+                <span asp-validation-for="BirthDate"
+                      class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="Description" class="control-label">Описание</label>
-                <textarea asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label asp-for="Description">
+                    Описание
+                </label>
+                <textarea asp-for="Description"
+                          class="form-control"></textarea>
+                <span asp-validation-for="Description"
+                      class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="ImageFile" class="control-label">Снимка на животното</label>
+                <label asp-for="ImageFile">
+                    Снимка на животното
+                </label>
                 <input asp-for="ImageFile"
                        type="file"
                        accept=".jpg,.jpeg,.png,.webp"
                        class="form-control" />
-                <span asp-validation-for="ImageFile" class="text-danger"></span>
+                <span asp-validation-for="ImageFile"
+                      class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Създай</button>
+            <button type="submit" class="btn btn-primary">
+                Създай
+            </button>
         </form>
     </div>
 </div>
@@ -83,6 +111,56 @@
 
 @section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
     }
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const typeSelect = document.getElementById("AnimalTypeId");
+            const breedSelect = document.getElementById("BreedId");
+
+            const breeds = @Html.Raw(
+                            System.Text.Json.JsonSerializer.Serialize(
+                            ViewData["BreedsByType"]
+                            )
+                            );
+
+            const selectedBreed = breedSelect.value;
+
+            function updateBreeds(keepSelection = false) {
+                const typeId = Number(typeSelect.value);
+
+                breedSelect.innerHTML = "";
+
+                const placeholder = document.createElement("option");
+                placeholder.value = "";
+                placeholder.textContent = "-- Избери порода --";
+                breedSelect.appendChild(placeholder);
+
+                breeds
+                    .filter(breed => breed.AnimalTypeId === typeId)
+                    .forEach(breed => {
+                        const option = document.createElement("option");
+                        option.value = breed.BreedId;
+                        option.textContent = breed.Name;
+
+                        if (keepSelection &&
+                            String(breed.BreedId) === selectedBreed) {
+                            option.selected = true;
+                        }
+
+                        breedSelect.appendChild(option);
+                    });
+
+                breedSelect.disabled = !typeSelect.value;
+            }
+
+            typeSelect.addEventListener("change", function () {
+                updateBreeds();
+            });
+
+            updateBreeds(true);
+        });
+    </script>
 }

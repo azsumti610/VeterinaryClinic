@@ -18,6 +18,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 await RoleSeeder.SeedAsync(app.Services);
+await AnimalDataSeeder.SeedAsync(app.Services);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

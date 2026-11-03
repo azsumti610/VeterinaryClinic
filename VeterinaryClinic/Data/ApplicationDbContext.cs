@@ -24,6 +24,10 @@ namespace VeterinaryClinic.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+         
+            
+
             builder.Entity<Owner>()
     .HasOne(owner => owner.ApplicationUser)
     .WithOne(user => user.Owner)
