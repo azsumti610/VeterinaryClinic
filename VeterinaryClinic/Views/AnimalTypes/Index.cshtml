@@ -1,47 +1,30 @@
 @model IEnumerable<VeterinaryClinic.Models.AnimalType>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Видове животни";
 }
 
-<h1>Index</h1>
+<h1>Видове животни</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    Списък с видовете животни, поддържани
+    от ветеринарната клиника.
 </p>
-<table class="table">
+
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Breeds)
-            </th>
-            <th></th>
+            <th>Вид животно</th>
+            <th>Описание</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(model => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Breeds)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.AnimalTypeId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.AnimalTypeId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.AnimalTypeId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@(item.Description ?? "Няма описание")</td>
+            </tr>
+        }
     </tbody>
 </table>

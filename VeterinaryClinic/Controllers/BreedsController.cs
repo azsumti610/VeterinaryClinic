@@ -1,10 +1,10 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using VeterinaryClinic.Data;
-using VeterinaryClinic.Models;
 
+[Authorize]
 public class BreedsController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -14,150 +14,74 @@ public class BreedsController : Controller
         _context = context;
     }
 
-    // GET: BREEDS
-    public async Task<IActionResult> Index()    
+    public async Task<IActionResult> Index()
     {
-        return View(await _context.Breeds
-        .Include(breed => breed.AnimalType)
-        .ToListAsync());
+        var breeds = await _context.Breeds
+            .Include(b => b.AnimalType)
+            .AsNoTracking()
+            .OrderBy(b => b.AnimalType!.Name)
+            .ThenBy(b => b.Name)
+            .ToListAsync();
+
+        return View(breeds);
     }
 
-    // GET: BREEDS/Details/5
     public async Task<IActionResult> Details(int? breedid)
     {
         if (breedid == null)
-        {
             return NotFound();
-        }
 
         var breed = await _context.Breeds
-            .FirstOrDefaultAsync(m => m.BreedId == breedid);
+            .Include(b => b.AnimalType)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(b => b.BreedId == breedid);
+
         if (breed == null)
-        {
             return NotFound();
-        }
 
         return View(breed);
     }
 
-    // GET: BREEDS/Create
-    public IActionResult Create()
-    {
-        ViewData["AnimalTypeId"] = new SelectList(
-       _context.AnimalTypes,
-       "AnimalTypeId",
-       "Name");
-        return View();
-    }
-
-    // POST: BREEDS/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("BreedId,Name,Description,AnimalTypeId,AnimalType,Animals")] Breed breed)
-    {
-        if (ModelState.IsValid)
-        {
-            _context.Add(breed);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-        ViewData["AnimalTypeId"] = new SelectList(
-       _context.AnimalTypes,
-       "AnimalTypeId",
-       "Name",
-       breed.AnimalTypeId);
-
-        return View(breed);
-    }
-
-    // GET: BREEDS/Edit/5
+    // Показва формата за редактиране на описание
+    [HttpGet]
     public async Task<IActionResult> Edit(int? breedid)
     {
         if (breedid == null)
-        {
             return NotFound();
-        }
 
         var breed = await _context.Breeds.FindAsync(breedid);
+
         if (breed == null)
-        {
             return NotFound();
-        }
+
         return View(breed);
     }
 
-    // POST: BREEDS/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    // Запазва само описанието
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? breedid, [Bind("BreedId,Name,Description,AnimalTypeId,AnimalType,Animals")] Breed breed)
-    {
-        if (breedid != breed.BreedId)
-        {
-            return NotFound();
-        }
-
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                _context.Update(breed);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BreedExists(breed.BreedId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return RedirectToAction(nameof(Index));
-        }
-        return View(breed);
-    }
-
-    // GET: BREEDS/Delete/5
-    public async Task<IActionResult> Delete(int? breedid)
-    {
-        if (breedid == null)
-        {
-            return NotFound();
-        }
-
-        var breed = await _context.Breeds
-            .FirstOrDefaultAsync(m => m.BreedId == breedid);
-        if (breed == null)
-        {
-            return NotFound();
-        }
-
-        return View(breed);
-    }
-
-    // POST: BREEDS/Delete/5
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? breedid)
+    public async Task<IActionResult> Edit(
+        int breedid,
+        string? description)
     {
         var breed = await _context.Breeds.FindAsync(breedid);
-        if (breed != null)
+
+        if (breed == null)
+            return NotFound();
+
+        if (description?.Length > 1000)
         {
-            _context.Breeds.Remove(breed);
+            ModelState.AddModelError(
+                "Description",
+                "Описанието не може да надвишава 1000 символа.");
+
+            return View(breed);
         }
 
-        await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
-    }
+        breed.Description = description;
 
-    private bool BreedExists(int? breedid)
-    {
-        return _context.Breeds.Any(e => e.BreedId == breedid);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
     }
 }

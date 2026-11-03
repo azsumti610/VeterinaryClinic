@@ -7,29 +7,33 @@
 <h1>Породи</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Добави порода</a>
+    Списък с породите животни, поддържани
+    от ветеринарната клиника.
 </p>
 
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Порода</th>
             <th>Описание</th>
             <th>Вид животно</th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
+                
+                
                 <td>@item.Name</td>
-                <td>@item.Description</td>
+                <td>@(item.Description ?? "Няма описание")</td>
                 <td>@item.AnimalType?.Name</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.BreedId">Редактирай</a> |
-                    <a asp-action="Details" asp-route-id="@item.BreedId">Детайли</a> |
-                    <a asp-action="Delete" asp-route-id="@item.BreedId">Изтрий</a>
+                    <td>
+                    <a asp-action="Edit"
+                       asp-route-breedid="@item.BreedId"
+                       class="btn btn-outline-primary btn-sm">
+                        Редактирай описание
+                    </a>
                 </td>
             </tr>
         }
