@@ -1,9 +1,12 @@
+
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using VeterinaryClinic.Models;
 using VeterinaryClinic.Data;
 
+[Authorize]
 public class ExaminationsController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -13,60 +16,147 @@ public class ExaminationsController : Controller
         _context = context;
     }
 
-    // GET: EXAMINATIONS
-    public async Task<IActionResult> Index()    
+    // GET: Examinations
+    public async Task<IActionResult> Index()
     {
-
         var examinations = await _context.Examinations
-        .Include(examination => examination.Animal)
-        .Include(examination => examination.Doctor)
-        .ToListAsync();
+            .Include(e => e.Animal)
+            .Include(e => e.Doctor)
+            .ToListAsync();
+
         return View(examinations);
     }
 
-    // GET: EXAMINATIONS/Details/5
-    public async Task<IActionResult> Details(int? examinationid)
+    // GET: Examinations/Details/5
+    public async Task<IActionResult> Details(int? id)
     {
-        if (examinationid == null)
-        {
+        if (id == null)
             return NotFound();
-        }
 
         var examination = await _context.Examinations
-            .FirstOrDefaultAsync(m => m.ExaminationId == examinationid);
+            .Include(e => e.Animal)
+            .Include(e => e.Doctor)
+            .FirstOrDefaultAsync(e => e.ExaminationId == id);
+
         if (examination == null)
-        {
             return NotFound();
-        }
 
         return View(examination);
     }
 
-    // GET: EXAMINATIONS/Create
+    // GET: Examinations/Create
     public IActionResult Create()
     {
         PopulateDropdowns();
         return View();
     }
 
-    // POST: EXAMINATIONS/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    // POST: Examinations/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("ExaminationId,AnimalId,Animal,DoctorId,Doctor,ExamDate,ExamTime,Description,Diagnosis,Recommendations")] Examination examination)
+    public async Task<IActionResult> Create(
+        [Bind("AnimalId,DoctorId,ExamDate,ExamTime,Description,Diagnosis,Recommendations")]
+        Examination examination)
     {
         if (ModelState.IsValid)
         {
-            _context.Add(examination);
+            _context.Examinations.Add(examination);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
+
         PopulateDropdowns(examination.AnimalId, examination.DoctorId);
         return View(examination);
-
     }
-    private void PopulateDropdowns(int? selectedAnimalId = null, string? selectedDoctorId = null)
+
+    // GET: Examinations/Edit/5
+    public async Task<IActionResult> Edit(int? id)
+    {
+        if (id == null)
+            return NotFound();
+
+        var examination = await _context.Examinations.FindAsync(id);
+
+        if (examination == null)
+            return NotFound();
+
+        PopulateDropdowns(examination.AnimalId, examination.DoctorId);
+
+        return View(examination);
+    }
+
+    // POST: Examinations/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(
+        int id,
+        [Bind("ExaminationId,AnimalId,DoctorId,ExamDate,ExamTime,Description,Diagnosis,Recommendations")]
+        Examination input)
+    {
+        if (id != input.ExaminationId)
+            return NotFound();
+
+        var examination = await _context.Examinations.FindAsync(id);
+
+        if (examination == null)
+            return NotFound();
+
+        if (!ModelState.IsValid)
+        {
+            PopulateDropdowns(input.AnimalId, input.DoctorId);
+            return View(input);
+        }
+
+        examination.AnimalId = input.AnimalId;
+        examination.DoctorId = input.DoctorId;
+        examination.ExamDate = input.ExamDate;
+        examination.ExamTime = input.ExamTime;
+        examination.Description = input.Description;
+        examination.Diagnosis = input.Diagnosis;
+        examination.Recommendations = input.Recommendations;
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    // GET: Examinations/Delete/5
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id == null)
+            return NotFound();
+
+        var examination = await _context.Examinations
+            .Include(e => e.Animal)
+            .Include(e => e.Doctor)
+            .FirstOrDefaultAsync(e => e.ExaminationId == id);
+
+        if (examination == null)
+            return NotFound();
+
+        return View(examination);
+    }
+
+    // POST: Examinations/Delete/5
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var examination = await _context.Examinations.FindAsync(id);
+
+        if (examination == null)
+            return NotFound();
+
+        _context.Examinations.Remove(examination);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    private void PopulateDropdowns(
+        int? selectedAnimalId = null,
+        string? selectedDoctorId = null)
     {
         var animals = _context.Animals
             .Select(animal => new
@@ -75,105 +165,28 @@ public class ExaminationsController : Controller
                 DisplayName = animal.Name + " (" + animal.Breed.Name + ")"
             })
             .ToList();
+
         ViewData["AnimalId"] = new SelectList(
-            animals, "AnimalId", "DisplayName", selectedAnimalId);
+            animals,
+            "AnimalId",
+            "DisplayName",
+            selectedAnimalId);
+
         var doctors = _context.Users
             .Select(doctor => new
             {
                 doctor.Id,
-                DisplayName = doctor.FullName ?? doctor.Email ?? doctor.UserName ?? doctor.Id
+                DisplayName = doctor.FullName
+                    ?? doctor.Email
+                    ?? doctor.UserName
+                    ?? doctor.Id
             })
             .ToList();
+
         ViewData["DoctorId"] = new SelectList(
-            doctors, "Id", "DisplayName", selectedDoctorId);
-    }
-
-    // GET: EXAMINATIONS/Edit/5
-    public async Task<IActionResult> Edit(int? examinationid)
-    {
-        if (examinationid == null)
-        {
-            return NotFound();
-        }
-
-        var examination = await _context.Examinations.FindAsync(examinationid);
-        if (examination == null)
-        {
-            return NotFound();
-        }
-        return View(examination);
-    }
-
-    // POST: EXAMINATIONS/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? examinationid, [Bind("ExaminationId,AnimalId,Animal,DoctorId,Doctor,ExamDate,ExamTime,Description,Diagnosis,Recommendations")] Examination examination)
-    {
-        if (examinationid != examination.ExaminationId)
-        {
-            return NotFound();
-        }
-
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                _context.Update(examination);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ExaminationExists(examination.ExaminationId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return RedirectToAction(nameof(Index));
-        }
-        return View(examination);
-    }
-
-    // GET: EXAMINATIONS/Delete/5
-    public async Task<IActionResult> Delete(int? examinationid)
-    {
-        if (examinationid == null)
-        {
-            return NotFound();
-        }
-
-        var examination = await _context.Examinations
-            .FirstOrDefaultAsync(m => m.ExaminationId == examinationid);
-        if (examination == null)
-        {
-            return NotFound();
-        }
-
-        return View(examination);
-    }
-
-    // POST: EXAMINATIONS/Delete/5
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? examinationid)
-    {
-        var examination = await _context.Examinations.FindAsync(examinationid);
-        if (examination != null)
-        {
-            _context.Examinations.Remove(examination);
-        }
-
-        await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
-    }
-
-    private bool ExaminationExists(int? examinationid)
-    {
-        return _context.Examinations.Any(e => e.ExaminationId == examinationid);
+            doctors,
+            "Id",
+            "DisplayName",
+            selectedDoctorId);
     }
 }

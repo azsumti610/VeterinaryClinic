@@ -1,74 +1,147 @@
 @model VeterinaryClinic.Models.Examination
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Редактиране на преглед";
 }
 
-<h1>Edit</h1>
+<h1>Редактиране на преглед</h1>
 
-<h4>Examination</h4>
+<p>Променете информацията за ветеринарния преглед.</p>
+
 <hr />
+
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ExaminationId" />
-            <div class="form-group">
-                <label asp-for="AnimalId" class="control-label"></label>
-                <input asp-for="AnimalId" class="form-control" />
-                <span asp-validation-for="AnimalId" class="text-danger"></span>
+    <div class="col-md-8">
+
+        <form asp-action="Edit"
+              asp-route-id="@Model.ExaminationId"
+              method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger"></div>
+
+            <input type="hidden"
+                   asp-for="ExaminationId" />
+
+            <div class="mb-3">
+                <label asp-for="AnimalId"
+                       class="form-label">
+                    Животно
+                </label>
+
+                <select asp-for="AnimalId"
+                        asp-items="ViewBag.AnimalId"
+                        class="form-select">
+                    <option value="">-- Избери животно --</option>
+                </select>
+
+                <span asp-validation-for="AnimalId"
+                      class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Animal" class="control-label"></label>
-                <input asp-for="Animal" class="form-control" />
-                <span asp-validation-for="Animal" class="text-danger"></span>
+
+            <div class="mb-3">
+                <label asp-for="DoctorId"
+                       class="form-label">
+                    Ветеринарен лекар
+                </label>
+
+                <select asp-for="DoctorId"
+                        asp-items="ViewBag.DoctorId"
+                        class="form-select">
+                    <option value="">-- Избери лекар --</option>
+                </select>
+
+                <span asp-validation-for="DoctorId"
+                      class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="DoctorId" class="control-label"></label>
-                <input asp-for="DoctorId" class="form-control" />
-                <span asp-validation-for="DoctorId" class="text-danger"></span>
+
+            <div class="mb-3">
+                <label asp-for="ExamDate"
+                       class="form-label">
+                    Дата на прегледа
+                </label>
+
+                <input asp-for="ExamDate"
+                       type="date"
+                       class="form-control" />
+
+                <span asp-validation-for="ExamDate"
+                      class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Doctor" class="control-label"></label>
-                <input asp-for="Doctor" class="form-control" />
-                <span asp-validation-for="Doctor" class="text-danger"></span>
+
+            <div class="mb-3">
+                <label asp-for="ExamTime"
+                       class="form-label">
+                    Час на прегледа
+                </label>
+
+                <input asp-for="ExamTime"
+                       type="time"
+                       class="form-control" />
+
+                <span asp-validation-for="ExamTime"
+                      class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ExamDate" class="control-label"></label>
-                <input asp-for="ExamDate" class="form-control" />
-                <span asp-validation-for="ExamDate" class="text-danger"></span>
+
+            <div class="mb-3">
+                <label asp-for="Description"
+                       class="form-label">
+                    Описание
+                </label>
+
+                <textarea asp-for="Description"
+                          class="form-control"
+                          rows="3"></textarea>
+
+                <span asp-validation-for="Description"
+                      class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ExamTime" class="control-label"></label>
-                <input asp-for="ExamTime" class="form-control" />
-                <span asp-validation-for="ExamTime" class="text-danger"></span>
+
+            <div class="mb-3">
+                <label asp-for="Diagnosis"
+                       class="form-label">
+                    Диагноза
+                </label>
+
+                <textarea asp-for="Diagnosis"
+                          class="form-control"
+                          rows="3"></textarea>
+
+                <span asp-validation-for="Diagnosis"
+                      class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+
+            <div class="mb-3">
+                <label asp-for="Recommendations"
+                       class="form-label">
+                    Препоръки
+                </label>
+
+                <textarea asp-for="Recommendations"
+                          class="form-control"
+                          rows="3"></textarea>
+
+                <span asp-validation-for="Recommendations"
+                      class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Diagnosis" class="control-label"></label>
-                <input asp-for="Diagnosis" class="form-control" />
-                <span asp-validation-for="Diagnosis" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Recommendations" class="control-label"></label>
-                <input asp-for="Recommendations" class="form-control" />
-                <span asp-validation-for="Recommendations" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+
+            <button type="submit"
+                    class="btn btn-primary">
+                Запази промените
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+                Назад към прегледите
+            </a>
+
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
 }

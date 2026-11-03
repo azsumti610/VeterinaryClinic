@@ -1,90 +1,81 @@
 @model VeterinaryClinic.Models.Examination
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Изтриване на преглед";
 }
 
-<h1>Delete</h1>
+<h1>Изтриване на преглед</h1>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>VeterinaryClinic.Models.Examination</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AnimalId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AnimalId)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Animal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Animal)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DoctorId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DoctorId)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Doctor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Doctor)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ExamDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ExamDate)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ExamTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ExamTime)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Diagnosis)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Diagnosis)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Recommendations)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Recommendations)
-        </dd>
-    </dl>
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="ExaminationId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+<div class="alert alert-warning">
+    <strong>Внимание!</strong>
+    Сигурни ли сте, че искате да изтриете този преглед?
+    Това действие не може да бъде отменено.
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+
+        <dl class="row">
+
+            <dt class="col-sm-4">Животно</dt>
+            <dd class="col-sm-8">
+                @(Model.Animal?.Name ?? "Няма информация")
+            </dd>
+
+            <dt class="col-sm-4">Ветеринарен лекар</dt>
+            <dd class="col-sm-8">
+                @(Model.Doctor?.FullName
+                    ?? Model.Doctor?.Email
+                    ?? "Няма информация")
+            </dd>
+
+            <dt class="col-sm-4">Дата на прегледа</dt>
+            <dd class="col-sm-8">
+                @Model.ExamDate.ToString("dd.MM.yyyy")
+            </dd>
+
+            <dt class="col-sm-4">Час на прегледа</dt>
+            <dd class="col-sm-8">
+                @Model.ExamTime
+            </dd>
+
+            <dt class="col-sm-4">Описание</dt>
+            <dd class="col-sm-8">
+                @(Model.Description ?? "Няма описание")
+            </dd>
+
+            <dt class="col-sm-4">Диагноза</dt>
+            <dd class="col-sm-8">
+                @(Model.Diagnosis ?? "Няма диагноза")
+            </dd>
+
+            <dt class="col-sm-4">Препоръки</dt>
+            <dd class="col-sm-8">
+                @(Model.Recommendations ?? "Няма препоръки")
+            </dd>
+
+        </dl>
+
+        <form asp-action="Delete"
+              asp-route-id="@Model.ExaminationId"
+              method="post">
+
+            <input type="hidden"
+                   asp-for="ExaminationId" />
+
+            <button type="submit"
+                    class="btn btn-danger">
+                Изтрий прегледа
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+                Отказ
+            </a>
+
+        </form>
+
+    </div>
 </div>
