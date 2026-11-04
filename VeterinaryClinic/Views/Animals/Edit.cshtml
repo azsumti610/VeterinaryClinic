@@ -80,7 +80,8 @@
                 </label>
                 <input asp-for="BirthDate"
                        type="date"
-                       class="form-control" />
+                       class="form-control" 
+                       max="@DateTime.Today.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="BirthDate"
                       class="text-danger"></span>
             </div>

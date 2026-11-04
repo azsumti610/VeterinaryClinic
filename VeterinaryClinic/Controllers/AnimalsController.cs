@@ -378,6 +378,15 @@ public class AnimalsController : Controller
 
     private async Task ValidateAnimalAsync(Animal animal)
     {
+
+        if (animal.BirthDate.HasValue &&
+     animal.BirthDate.Value > DateOnly.FromDateTime(System.DateTime.Today))
+        {
+            ModelState.AddModelError(
+                nameof(Animal.BirthDate),
+                "Датата на раждане не може да бъде в бъдещето.");
+        }
+
         if (!await _context.Breeds.AnyAsync(
             breed => breed.BreedId == animal.BreedId))
         {
