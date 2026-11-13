@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VeterinaryClinic.Web.Data;
+using VeterinaryClinic.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddScoped<IGreetingService, GreetingService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
