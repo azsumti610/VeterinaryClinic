@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VeterinaryClinic.Application\VeterinaryClinic.Application.csproj" />
+    <ProjectReference Include="..\VeterinaryClinic.Domain\VeterinaryClinic.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
