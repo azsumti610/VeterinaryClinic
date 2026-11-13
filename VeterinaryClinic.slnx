@@ -2,4 +2,5 @@
   <Project Path="VeterinaryClinic.Application/VeterinaryClinic.Application.csproj" />
   <Project Path="VeterinaryClinic.Domain/VeterinaryClinic.Domain.csproj" />
   <Project Path="VeterinaryClinic.Infrastructure/VeterinaryClinic.Infrastructure.csproj" />
+  <Project Path="VeterinaryClinic.Web/VeterinaryClinic.Web.csproj" />
 </Solution>
