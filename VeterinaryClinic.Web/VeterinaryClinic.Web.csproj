@@ -16,4 +16,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.13" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VeterinaryClinic.Application\VeterinaryClinic.Application.csproj" />
+    <ProjectReference Include="..\VeterinaryClinic.Infrastructure\VeterinaryClinic.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
