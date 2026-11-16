@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using VeterinaryClinic.Web.Data;
+using VeterinaryClinic.Infrastructure.Data;
 using VeterinaryClinic.Application.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
-using VeterinaryClinic.Web.Data;
+using VeterinaryClinic.Infrastructure.Data;
 
 namespace VeterinaryClinic.Web.Data.Migrations
 {
