@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VeterinaryClinic.Infrastructure.Data;
 using VeterinaryClinic.Application.Services;
+using VeterinaryClinic.Application.Interfaces;
+using VeterinaryClinic.Application.Services.AnimalServices;
+using VeterinaryClinic.Infrastructure.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +20,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IGreetingService, GreetingService>();
+builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
+builder.Services.AddScoped<IAnimalService, AnimalService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
