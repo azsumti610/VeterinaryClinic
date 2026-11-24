@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using VeterinaryClinic.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+using VeterinaryClinic.Infrastructure.Identity;
 
 namespace VeterinaryClinic.Infrastructure.Data
 {
-    public class ApplicationDbContext( DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
+    public class ApplicationDbContext( DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
         public DbSet<Animal> Animals => Set<Animal>();
     }
