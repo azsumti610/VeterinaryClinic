@@ -21,7 +21,10 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services
     .AddDefaultIdentity<ClinicUser>(options =>
-        options.SignIn.RequireConfirmedAccount = true)
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.User.RequireUniqueEmail = true;
+    })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ClinicDbContext>();
 builder.Services.AddControllersWithViews();

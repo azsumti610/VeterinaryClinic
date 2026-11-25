@@ -74,10 +74,17 @@ public class RegisterModel : PageModel
     /// </summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        [Required(ErrorMessage = "Въведи потребителско име.")]
+        [StringLength(
+    50,
+    MinimumLength = 3,
+    ErrorMessage = "Потребителското име трябва да е между 3 и 50 символа.")]
+        [RegularExpression(
+    @"[a-zA-Z0-9._-]+",
+    ErrorMessage = "Използвай латински букви, цифри, точка, тире или долна черта.")]
+        [Display(Name = "Потребителско име")]
+        public string UserName { get; set; } = string.Empty;
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
@@ -127,7 +134,7 @@ public class RegisterModel : PageModel
         var user = CreateUser();
 
         await _userStore.SetUserNameAsync(
-            user, Input.Email, CancellationToken.None);
+            user, Input.UserName, CancellationToken.None);
 
         await _emailStore.SetEmailAsync(
             user, Input.Email, CancellationToken.None);
