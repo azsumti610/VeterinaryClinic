@@ -6,22 +6,24 @@ using VeterinaryClinic.Application.Interfaces;
 using VeterinaryClinic.Application.Services.AnimalServices;
 using VeterinaryClinic.Infrastructure.Repositories;
 using VeterinaryClinic.Infrastructure.Identity;
+using ClinicDbContext = VeterinaryClinic.Infrastructure.Data.ApplicationDbContext;
+using ClinicUser = VeterinaryClinic.Infrastructure.Identity.ApplicationUser;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<ClinicDbContext>(options =>
     options.UseSqlServer(connectionString, options =>
     options.MigrationsAssembly("VeterinaryClinic.Web")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services
-    .AddDefaultIdentity<ApplicationUser>(options =>
+    .AddDefaultIdentity<ClinicUser>(options =>
         options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ClinicDbContext>();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IGreetingService, GreetingService>();
@@ -34,7 +36,7 @@ using (var scope = app.Services.CreateScope())
         .GetRequiredService<RoleManager<IdentityRole>>();
     await IdentitySetup.EnsureRolesAsync(roleManager);
     var userManager = scope.ServiceProvider
-        .GetRequiredService<UserManager<ApplicationUser>>();
+        .GetRequiredService<UserManager<ClinicUser>>();
     var initialAdmin = app.Configuration.GetSection("InitialAdmin");
     var enabled = bool.TryParse(
         initialAdmin["Enabled"], out var value) && value;
@@ -60,6 +62,7 @@ else
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
