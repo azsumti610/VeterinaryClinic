@@ -32,8 +32,17 @@ using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider
         .GetRequiredService<RoleManager<IdentityRole>>();
-
     await IdentitySetup.EnsureRolesAsync(roleManager);
+    var userManager = scope.ServiceProvider
+        .GetRequiredService<UserManager<ApplicationUser>>();
+    var initialAdmin = app.Configuration.GetSection("InitialAdmin");
+    var enabled = bool.TryParse(
+        initialAdmin["Enabled"], out var value) && value;
+    await InitialAdminSetup.EnsureAsync(
+        userManager,
+        enabled,
+        initialAdmin["Email"],
+        initialAdmin["Password"]);
 }
 
 // Configure the HTTP request pipeline.
