@@ -1,0 +1,39 @@
+﻿@model VeterinaryClinic.Web.ViewModels.AdminUsers.DoctorCreatedViewModel
+
+@{
+    ViewData["Title"] = "Лекарят е добавен";
+}
+
+<h1>Профилът на лекаря е създаден</h1>
+
+<div class="alert alert-success">
+    Потребителят получи роля Doctor.
+    За вход трябва първо да зададе парола чрез поканата.
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Потребителско име</dt>
+    <dd class="col-sm-9">@Model.UserName</dd>
+
+    <dt class="col-sm-3">Имейл</dt>
+    <dd class="col-sm-9">@Model.Email</dd>
+</dl>
+
+<div class="alert alert-warning">
+    Поканата е поверителна. Предай я лично на лекаря.
+    Не я публикувай и не я записвай в Git.
+    Системата не е изпратила автоматично имейл.
+</div>
+
+<a href="@Model.ActivationUrl"
+   class="btn btn-primary"
+   target="_blank"
+   rel="noopener noreferrer">
+    Отвори поканата за задаване на парола
+</a>
+
+<a asp-controller="AdminUsers"
+   asp-action="CreateDoctor"
+   class="btn btn-outline-secondary">
+    Добави друг лекар
+</a>

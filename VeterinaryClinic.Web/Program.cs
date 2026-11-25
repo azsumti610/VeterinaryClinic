@@ -8,6 +8,7 @@ using VeterinaryClinic.Infrastructure.Repositories;
 using VeterinaryClinic.Infrastructure.Identity;
 using ClinicDbContext = VeterinaryClinic.Infrastructure.Data.ApplicationDbContext;
 using ClinicUser = VeterinaryClinic.Infrastructure.Identity.ApplicationUser;
+using VeterinaryClinic.Application.Users;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +33,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IGreetingService, GreetingService>();
 builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<IAnimalService, AnimalService>();
+builder.Services.AddScoped<IUserAdministrationService, UserAdministrationService>();
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {

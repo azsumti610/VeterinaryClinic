@@ -1,0 +1,56 @@
+﻿@model VeterinaryClinic.Web.ViewModels.DoctorActivation.ActivateDoctorViewModel
+
+@{
+    ViewData["Title"] = "Активиране на лекарски профил";
+}
+
+<h1>Активиране на лекарски профил</h1>
+
+<p>Задай собствена парола, за да активираш профила си.</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-controller="DoctorActivation"
+              asp-action="Activate"
+              method="post">
+
+            <input asp-for="UserId" type="hidden" />
+            <input asp-for="Code" type="hidden" />
+
+            <div asp-validation-summary="All"
+                 class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Password"
+                       class="form-label"></label>
+
+                <input asp-for="Password"
+                       class="form-control"
+                       autocomplete="new-password" />
+
+                <span asp-validation-for="Password"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword"
+                       class="form-label"></label>
+
+                <input asp-for="ConfirmPassword"
+                       class="form-control"
+                       autocomplete="new-password" />
+
+                <span asp-validation-for="ConfirmPassword"
+                      class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Активирай профила
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
