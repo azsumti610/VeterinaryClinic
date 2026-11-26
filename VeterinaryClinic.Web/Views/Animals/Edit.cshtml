@@ -1,0 +1,126 @@
+﻿@model VeterinaryClinic.Application.DTOs.EditAnimalDto
+
+@{
+    ViewData["Title"] = "Редактиране на животно";
+    var animalId = ViewData["AnimalId"];
+    var today = DateTime.Today.ToString("yyyy-MM-dd");
+}
+
+<h1>Редактиране на животно</h1>
+
+<p class="text-muted">
+    Промени основните данни и запази.
+    Собствеността и статусът не се променят от тази форма.
+</p>
+
+<div class="row">
+    <div class="col-md-7">
+        <form asp-action="Edit"
+              asp-route-id="@animalId"
+              method="post">
+
+            <div asp-validation-summary="All"
+                 class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">
+                    Име
+                </label>
+                <input asp-for="Name"
+                       class="form-control"
+                       maxlength="100" />
+                <span asp-validation-for="Name"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Species" class="form-label">
+                    Вид
+                </label>
+                <input asp-for="Species"
+                       class="form-control"
+                       maxlength="50" />
+                <span asp-validation-for="Species"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Breed" class="form-label">
+                    Порода
+                </label>
+                <input asp-for="Breed"
+                       class="form-control"
+                       maxlength="100" />
+                <span asp-validation-for="Breed"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DateOfBirth" class="form-label">
+                    Дата на раждане
+                </label>
+                <input asp-for="DateOfBirth"
+                       type="date"
+                       max="@today"
+                       class="form-control" />
+                <div class="form-text">
+                    Остави празно, ако датата е неизвестна.
+                </div>
+                <span asp-validation-for="DateOfBirth"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Sex" class="form-label">
+                    Пол
+                </label>
+                <select asp-for="Sex" class="form-select">
+                    <option value="0">Неизвестен</option>
+                    <option value="1">Мъжки</option>
+                    <option value="2">Женски</option>
+                </select>
+                <span asp-validation-for="Sex"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DistinguishingMarks"
+                       class="form-label">
+                    Отличителни белези
+                </label>
+                <textarea asp-for="DistinguishingMarks"
+                          class="form-control"
+                          maxlength="1000"
+                          rows="3"></textarea>
+                <span asp-validation-for="DistinguishingMarks"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="HealthNotes" class="form-label">
+                    Основни здравни бележки
+                </label>
+                <textarea asp-for="HealthNotes"
+                          class="form-control"
+                          maxlength="2000"
+                          rows="3"></textarea>
+                <span asp-validation-for="HealthNotes"
+                      class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Запази промените
+            </button>
+
+            <a asp-action="Details"
+               asp-route-id="@animalId"
+               class="btn btn-outline-secondary">
+                Отказ
+            </a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

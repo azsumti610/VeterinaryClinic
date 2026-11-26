@@ -73,6 +73,37 @@ namespace VeterinaryClinic.Application.Services.AnimalServices
                 cancellationToken);
             return animal is null ? null : MapToDto(animal);
         }
+        public async Task<bool> EditAnimalAsync(
+    Guid animalId,
+    EditAnimalDto dto,
+    string ownerId,
+    CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(dto);
+            ArgumentException.ThrowIfNullOrWhiteSpace(ownerId);
+
+            if (animalId == Guid.Empty)
+            {
+                return false;
+            }
+
+            Validator.ValidateObject(
+                dto,
+                new ValidationContext(dto),
+                validateAllProperties: true);
+
+            return await _repository.UpdateOwnedAsync(
+                animalId,
+                ownerId,
+                dto.Name,
+                dto.Species,
+                dto.Breed,
+                dto.DateOfBirth,
+                dto.Sex,
+                dto.DistinguishingMarks,
+                dto.HealthNotes,
+                cancellationToken);
+        }
         private static AnimalDto MapToDto(Animal animal)
         {
             return new AnimalDto

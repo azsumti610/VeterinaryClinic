@@ -23,15 +23,42 @@
             string? distinguishingMarks = null,
             string? healthNotes = null)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            UpdateDetails(
+                name,
+                species,
+                breed,
+                dateOfBirth,
+                sex,
+                distinguishingMarks,
+                healthNotes);
+            Id = Guid.NewGuid();
+            Status = AnimalStatus.Active;
+        }
+        public void UpdateDetails(
+            string name,
+            string species,
+            string? breed,
+            DateTime? dateOfBirth,
+            AnimalSex sex,
+            string? distinguishingMarks,
+            string? healthNotes)
+        {
+            if (string.IsNullOrWhiteSpace(name) ||
+                name.Trim().Length > 100)
             {
                 throw new ArgumentException(
-                    "Името на животното е задължително.");
+                    "Името е задължително и може да е до 100 символа.");
             }
-            if (string.IsNullOrWhiteSpace(species))
+            if (string.IsNullOrWhiteSpace(species) ||
+                species.Trim().Length > 50)
             {
                 throw new ArgumentException(
-                    "Видът на животното е задължителен.");
+                    "Видът е задължителен и може да е до 50 символа.");
+            }
+            if ((breed?.Length ?? 0) > 100)
+            {
+                throw new ArgumentException(
+                    "Породата може да е до 100 символа.");
             }
             if (dateOfBirth.HasValue &&
                 dateOfBirth.Value.Date > DateTime.Today)
@@ -44,7 +71,16 @@
                 throw new ArgumentException(
                     "Невалидна стойност за пола на животното.");
             }
-            Id = Guid.NewGuid();
+            if ((distinguishingMarks?.Length ?? 0) > 1000)
+            {
+                throw new ArgumentException(
+                    "Отличителните белези могат да са до 1000 символа.");
+            }
+            if ((healthNotes?.Length ?? 0) > 2000)
+            {
+                throw new ArgumentException(
+                    "Здравните бележки могат да са до 2000 символа.");
+            }
             Name = name.Trim();
             Species = species.Trim();
             Breed = string.IsNullOrWhiteSpace(breed)
@@ -59,9 +95,7 @@
             HealthNotes = string.IsNullOrWhiteSpace(healthNotes)
                 ? null
                 : healthNotes.Trim();
-            Status = AnimalStatus.Active;
-        } 
-
+        }
     }
     
 }

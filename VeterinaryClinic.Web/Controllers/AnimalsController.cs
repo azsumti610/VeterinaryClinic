@@ -123,6 +123,120 @@ public sealed class AnimalsController : Controller
 
         return View(model);
     }
+    [HttpGet]
+    public async Task<IActionResult> Edit(
+    [FromRoute] Guid id,
+    CancellationToken cancellationToken)
+    {
+        var ownerId = User.FindFirstValue(
+            ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(ownerId))
+        {
+            return Challenge();
+        }
+
+        var animal = await _animals.FindAnimalAsync(
+            id,
+            ownerId,
+            cancellationToken);
+
+        if (animal is null)
+        {
+            return NotFound();
+        }
+
+        ViewData["AnimalId"] = animal.Id;
+
+        return View(new EditAnimalDto
+        {
+            Name = animal.Name,
+            Species = animal.Species,
+            Breed = animal.Breed,
+            DateOfBirth = animal.DateOfBirth,
+            Sex = animal.Sex,
+            DistinguishingMarks = animal.DistinguishingMarks,
+            HealthNotes = animal.HealthNotes
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(
+        [FromRoute] Guid id,
+        EditAnimalDto model,
+        CancellationToken cancellationToken)
+    {
+        var ownerId = User.FindFirstValue(
+            ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(ownerId))
+        {
+            return Challenge();
+        }
+
+        var animal = await _animals.FindAnimalAsync(
+            id,
+            ownerId,
+            cancellationToken);
+
+        if (animal is null)
+        {
+            return NotFound();
+        }
+
+        ViewData["AnimalId"] = animal.Id;
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        try
+        {
+            var updated = await _animals.EditAnimalAsync(
+                id,
+                model,
+                ownerId,
+                cancellationToken);
+
+            if (!updated)
+            {
+                return NotFound();
+            }
+
+            TempData["Success"] =
+                "Данните на животното са обновени успешно.";
+
+            return RedirectToAction(
+                nameof(Details),
+                new { id });
+        }
+        catch (ValidationException exception)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                exception.Message);
+        }
+        catch (ArgumentException exception)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                exception.Message);
+        }
+        catch (InvalidOperationException exception)
+        {
+            _logger.LogWarning(
+                exception,
+                "Animal update was rejected.");
+
+            ModelState.AddModelError(
+                string.Empty,
+                "Промените не бяха записани. Опитай отново.");
+        }
+
+        return View(model);
+    }  
 
     [HttpGet]
     public async Task<IActionResult> Details(

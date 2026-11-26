@@ -19,5 +19,10 @@ namespace VeterinaryClinic.Application.Interfaces
             Guid animalId,
             string ownerId,
             CancellationToken cancellationToken = default);
+        Task<bool> EditAnimalAsync(
+    Guid animalId,
+    EditAnimalDto dto,
+    string ownerId,
+    CancellationToken cancellationToken = default);
     }
 }

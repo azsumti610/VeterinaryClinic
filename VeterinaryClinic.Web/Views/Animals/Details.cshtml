@@ -59,7 +59,11 @@
     <dd class="col-sm-9 text-break"
         style="white-space: pre-wrap;">@(Model.HealthNotes ?? "Няма посочени")</dd>
 </dl>
-
+<a asp-action="Edit"
+   asp-route-id="@Model.Id"
+   class="btn btn-primary me-2">
+    Редактирай
+</a>
 <a asp-action="Index" class="btn btn-outline-secondary">
     Към моите животни
 </a>

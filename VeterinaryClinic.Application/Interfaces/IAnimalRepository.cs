@@ -20,5 +20,17 @@ namespace VeterinaryClinic.Application.Interfaces
             Guid animalId,
             string ownerId,
             CancellationToken cancellationToken = default);
+
+        Task<bool> UpdateOwnedAsync(
+    Guid animalId,
+    string ownerId,
+    string name,
+    string species,
+    string? breed,
+    DateTime? dateOfBirth,
+    AnimalSex sex,
+    string? distinguishingMarks,
+    string? healthNotes,
+    CancellationToken cancellationToken = default);
     }
 }

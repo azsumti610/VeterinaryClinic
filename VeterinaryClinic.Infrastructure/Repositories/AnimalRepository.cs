@@ -47,6 +47,64 @@ namespace VeterinaryClinic.Infrastructure.Repositories
             _context.AnimalOwnerships.Add(ownership);
             await _context.SaveChangesAsync(cancellationToken);
         }
+        public async Task<bool> UpdateOwnedAsync(
+    Guid animalId,
+    string ownerId,
+    string name,
+    string species,
+    string? breed,
+    DateTime? dateOfBirth,
+    AnimalSex sex,
+    string? distinguishingMarks,
+    string? healthNotes,
+    CancellationToken cancellationToken = default)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(ownerId);
+
+            await using var transaction =
+                await _context.Database.BeginTransactionAsync(
+                    System.Data.IsolationLevel.Serializable,
+                    cancellationToken);
+
+            var owner = await _userManager.FindByIdAsync(ownerId);
+
+            if (owner is null ||
+                !owner.IsActive ||
+                !await _userManager.IsInRoleAsync(owner, "Owner"))
+            {
+                return false;
+            }
+
+            var animal = await _context.Animals
+                .FirstOrDefaultAsync(
+                    animal =>
+                        animal.Id == animalId &&
+                        _context.AnimalOwnerships.Any(ownership =>
+                            ownership.AnimalId == animal.Id &&
+                            ownership.OwnerId == ownerId &&
+                            ownership.IsActive),
+                    cancellationToken);
+
+            if (animal is null)
+            {
+                return false;
+            }
+
+            animal.UpdateDetails(
+                name,
+                species,
+                breed,
+                dateOfBirth,
+                sex,
+                distinguishingMarks,
+                healthNotes);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+
+            return true;
+        }
         public async Task<IReadOnlyList<Animal>> GetOwnedAsync(
             string ownerId,
             string? search = null,
