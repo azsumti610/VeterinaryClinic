@@ -7,8 +7,17 @@ namespace VeterinaryClinic.Application.Interfaces
 {
     public interface IAnimalService
     {
-        Task<AnimalDto> AddAnimalAsync(CreateAnimalDto dto);
-
-        Task<AnimalDto?> FindAnimalAsync(Guid id);
+        Task<AnimalDto> AddAnimalAsync(
+        CreateAnimalDto dto,
+        string ownerId,
+        CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<AnimalDto>> GetMyAnimalsAsync(
+            string ownerId,
+            string? search = null,
+            CancellationToken cancellationToken = default);
+        Task<AnimalDto?> FindAnimalAsync(
+            Guid animalId,
+            string ownerId,
+            CancellationToken cancellationToken = default);
     }
 }

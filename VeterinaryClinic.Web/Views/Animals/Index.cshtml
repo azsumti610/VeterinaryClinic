@@ -1,0 +1,92 @@
+﻿@model VeterinaryClinic.Web.ViewModels.Animals.AnimalListViewModel
+
+@{
+    ViewData["Title"] = "Моите животни";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Моите животни</h1>
+
+    <a asp-action="Create" class="btn btn-primary">
+        Добавяне на животно
+    </a>
+</div>
+
+<form asp-action="Index" method="get" class="row g-2 mb-4">
+    <div class="col-md-8">
+        <label for="search" class="visually-hidden">
+            Търсене
+        </label>
+
+        <input id="search"
+               name="search"
+               value="@Model.Search"
+               maxlength="100"
+               class="form-control"
+               placeholder="Търси по име, вид или порода" />
+    </div>
+
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">
+            Търси
+        </button>
+    </div>
+
+    <div class="col-auto">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            Изчисти
+        </a>
+    </div>
+</form>
+
+@if (Model.Animals.Count == 0)
+{
+    <div class="alert alert-info">
+        @if (string.IsNullOrWhiteSpace(Model.Search))
+        {
+            <span>Все още нямаш добавени животни.</span>
+        }
+        else
+        {
+            <span>Няма животни, отговарящи на търсенето.</span>
+        }
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Име</th>
+                    <th>Вид</th>
+                    <th>Порода</th>
+                    <th>Дата на раждане</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var animal in Model.Animals)
+                {
+                    <tr>
+                        <td>@animal.Name</td>
+                        <td>@animal.Species</td>
+                        <td>@(animal.Breed ?? "—")</td>
+                        <td>
+                            @(animal.DateOfBirth?.ToString("dd.MM.yyyy")
+                                ?? "Неизвестна")
+                        </td>
+                        <td>
+                            <a asp-action="Details"
+                               asp-route-id="@animal.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                Досие
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

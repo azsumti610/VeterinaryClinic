@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VeterinaryClinic.Domain.Entities;
 
 namespace VeterinaryClinic.Application.DTOs
 {
@@ -15,7 +16,9 @@ namespace VeterinaryClinic.Application.DTOs
         public string? Breed { get; set; }
 
         public DateTime? DateOfBirth { get; set; }
-
+        public AnimalSex Sex { get; set; }
+        public string? DistinguishingMarks { get; set; }
+        public string? HealthNotes { get; set; }
         public string Status { get; set; } = string.Empty;
     }
 }

@@ -1,0 +1,65 @@
+﻿@model VeterinaryClinic.Application.DTOs.AnimalDto
+@using VeterinaryClinic.Domain.Entities
+
+@{
+    ViewData["Title"] = "Досие на животно";
+
+    var sexText = Model.Sex switch
+    {
+        AnimalSex.Male => "Мъжки",
+        AnimalSex.Female => "Женски",
+        _ => "Неизвестен"
+    };
+
+    var statusText = Model.Status switch
+    {
+        "Active" => "Активен",
+        "Inactive" => "Неактивен",
+        "Deceased" => "Починал",
+        _ => "Неизвестен"
+    };
+}
+
+<h1>Досие: @Model.Name</h1>
+
+@if (TempData["Success"] is string success)
+{
+    <div class="alert alert-success" role="status">
+        @success
+    </div>
+}
+
+<dl class="row mt-4">
+    <dt class="col-sm-3">Име</dt>
+    <dd class="col-sm-9">@Model.Name</dd>
+
+    <dt class="col-sm-3">Вид</dt>
+    <dd class="col-sm-9">@Model.Species</dd>
+
+    <dt class="col-sm-3">Порода</dt>
+    <dd class="col-sm-9">@(Model.Breed ?? "Не е посочена")</dd>
+
+    <dt class="col-sm-3">Дата на раждане</dt>
+    <dd class="col-sm-9">
+        @(Model.DateOfBirth?.ToString("dd.MM.yyyy")
+            ?? "Неизвестна")
+    </dd>
+
+    <dt class="col-sm-3">Пол</dt>
+    <dd class="col-sm-9">@sexText</dd>
+
+    <dt class="col-sm-3">Статус</dt>
+    <dd class="col-sm-9">@statusText</dd>
+
+    <dt class="col-sm-3">Отличителни белези</dt>
+    <dd class="col-sm-9 text-break"
+        style="white-space: pre-wrap;">@(Model.DistinguishingMarks ?? "Няма посочени")</dd>
+
+    <dt class="col-sm-3">Основни здравни бележки</dt>
+    <dd class="col-sm-9 text-break"
+        style="white-space: pre-wrap;">@(Model.HealthNotes ?? "Няма посочени")</dd>
+</dl>
+
+<a asp-action="Index" class="btn btn-outline-secondary">
+    Към моите животни
+</a>
