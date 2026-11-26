@@ -4,6 +4,7 @@ using System.Text;
 
 namespace VeterinaryClinic.Domain.Entities
 {
+   
     public enum AnimalStatus
     {
         Active = 1,
