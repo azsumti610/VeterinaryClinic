@@ -9,8 +9,7 @@ using VeterinaryClinic.Infrastructure.Data;
 
 namespace VeterinaryClinic.Web.Data.Migrations
 {
-    [DbContext(typeof(
-        ApplicationDbContext))]
+    [DbContext(typeof(global::VeterinaryClinic.Infrastructure.Data.ApplicationDbContext))]
     [Migration("00000000000000_CreateIdentitySchema")]
     partial class CreateIdentitySchema
     {
