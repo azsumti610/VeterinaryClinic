@@ -1,0 +1,101 @@
+﻿@using System.Security.Claims
+@model System.Collections.Generic.IReadOnlyList<VeterinaryClinic.Application.DTOs.UserSummaryDto>
+
+@{
+    ViewData["Title"] = "Потребители";
+
+    var currentUserId = User.FindFirst(
+        ClaimTypes.NameIdentifier)?.Value;
+}
+
+<h1>Потребители</h1>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success" role="status">
+        @successMessage
+    </div>
+}
+
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
+
+<p>
+    <a asp-controller="AdminUsers"
+       asp-action="CreateDoctor"
+       class="btn btn-primary">
+        Добави лекар
+    </a>
+</p>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Потребителско име</th>
+                <th>Имейл</th>
+                <th>Роли</th>
+                <th>Статус</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>@user.Roles</td>
+                    <td>
+                        @if (user.IsActive)
+                        {
+                            <span class="badge bg-success">
+                                Активен
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">
+                                Неактивен
+                            </span>
+                        }
+                    </td>
+                    <td>
+                        @if (user.Id == currentUserId)
+                        {
+                            <span class="text-muted">
+                                Твоят профил
+                            </span>
+                        }
+                        else
+                        {
+                            <form asp-controller="AdminUsers"
+                                  asp-action="SetActive"
+                                  method="post"
+                                  onsubmit="return confirm('Потвърждаваш ли промяната на активността?');">
+
+                                <input type="hidden"
+                                       name="userId"
+                                       value="@user.Id" />
+
+                                <input type="hidden"
+                                       name="isActive"
+                                       value="@(user.IsActive ? "false" : "true")" />
+
+                                <button type="submit"
+                                        class="btn btn-sm @(user.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                                    @(user.IsActive ? "Деактивирай" : "Активирай")
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

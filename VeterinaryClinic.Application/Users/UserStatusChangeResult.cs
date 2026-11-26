@@ -4,7 +4,7 @@ using System.Text;
 
 namespace VeterinaryClinic.Application.Users;
 
-public sealed class DoctorActivationResult
+public sealed class UserStatusChangeResult
 {
     public bool Succeeded { get; init; }
 

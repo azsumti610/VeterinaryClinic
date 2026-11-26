@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using VeterinaryClinic.Application.Users;
 using VeterinaryClinic.Web.ViewModels.AdminUsers;
+using System.Security.Claims;
 
 namespace VeterinaryClinic.Web.Controllers;
 
@@ -21,9 +22,12 @@ public class AdminUsersController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index(
+     CancellationToken cancellationToken)
     {
-        return RedirectToAction(nameof(CreateDoctor));
+        var users = await _users.GetUsersAsync(cancellationToken);
+
+        return View(users);
     }
 
     [HttpGet]
@@ -92,5 +96,47 @@ public class AdminUsersController : Controller
             Email = model.Email.Trim(),
             ActivationUrl = activationUrl
         });
+
+        
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetActive(
+    string userId,
+    bool isActive,
+    CancellationToken cancellationToken)
+    {
+        var actingAdminId = User.FindFirst(
+            ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrWhiteSpace(actingAdminId))
+        {
+            return Forbid();
+        }
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return BadRequest();
+        }
+
+        var result = await _users.SetUserActiveAsync(
+            userId,
+            isActive,
+            actingAdminId,
+            cancellationToken);
+
+        if (result.Succeeded)
+        {
+            TempData["SuccessMessage"] = isActive
+                ? "Профилът е активиран."
+                : "Профилът е деактивиран.";
+        }
+        else
+        {
+            TempData["ErrorMessage"] =
+                result.Error ?? "Промяната не беше извършена.";
+        }
+
+        return RedirectToAction(nameof(Index));
     }
 }

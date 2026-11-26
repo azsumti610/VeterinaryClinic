@@ -9,6 +9,7 @@ using VeterinaryClinic.Infrastructure.Identity;
 using ClinicDbContext = VeterinaryClinic.Infrastructure.Data.ApplicationDbContext;
 using ClinicUser = VeterinaryClinic.Infrastructure.Identity.ApplicationUser;
 using VeterinaryClinic.Application.Users;
+using VeterinaryClinic.Web.Identity;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,13 +28,18 @@ builder.Services
         options.User.RequireUniqueEmail = true;
     })
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ClinicDbContext>();
+    .AddEntityFrameworkStores<ClinicDbContext>()
+    .AddSignInManager<ActiveUserSignInManager>();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IGreetingService, GreetingService>();
 builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<IUserAdministrationService, UserAdministrationService>();
+builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+{
+    options.ValidationInterval = TimeSpan.Zero;
+});
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
